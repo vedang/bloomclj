@@ -54,9 +54,3 @@
   (to-byte-array [s] (.getBytes (binding [*print-dup* false]
                                   (pr-str s))
                                 "utf-8")))
-
-
-(defprotocol IFilter
-  "Implement a Bloom Filter"
-  (add [this elem])
-  (maybe-contains? [this elem]))
