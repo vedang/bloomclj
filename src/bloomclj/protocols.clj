@@ -1,9 +1,11 @@
 (ns bloomclj.protocols)
 
 
-;;; Protocol IByteArray - convert input to byte array.
-;;; Contributed by: Kiran Kulkarni <kiran.1267@gmail.com>
-;;; ===================================================
+;;; ## Protocol IByteArray
+;;; convert the given input to a byte array.
+
+;;; ### Contributed by: Kiran Kulkarni (@kirankulkarni) <kiran.1267@gmail.com>
+
 (defprotocol IByteArray
   (to-byte-array [this]))
 
