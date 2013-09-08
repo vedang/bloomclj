@@ -37,7 +37,8 @@
 (defprotocol IFilter
   "Implement a Bloom Filter"
   (add [this elem])
-  (maybe-contains? [this elem]))
+  (maybe-contains? [this elem])
+  (clear [this]))
 
 
 (defn add
@@ -54,5 +55,14 @@
   [o i]
   (if (instance? bloomclj.core.IFilter o)
     (.maybe-contains? o i)
+    (throw (java.lang.ClassCastException.
+            (str (class o) " does not implement IFilter")))))
+
+
+(defn clear
+  "A generic function to clear the Bloom filter"
+  [o]
+  (if (instance? bloomclj.core.IFilter o)
+    (.clear o)
     (throw (java.lang.ClassCastException.
             (str (class o) " does not implement IFilter")))))

@@ -20,7 +20,10 @@
 
   (maybe-contains? [this elem]
     (every? identity (map #(.get bitarray %)
-                          (bc/get-hash-buckets elem k m)))))
+                          (bc/get-hash-buckets elem k m))))
+
+  (clear [this]
+    (.clear bitarray)))
 
 
 (defn transient-bloom-filter
