@@ -1,13 +1,18 @@
 (ns bloomclj.core
   (:require [bloomclj.protocols :refer [to-byte-array]])
-  (:import (bloomjava.util.hash MurmurHash3)))
+  (:import (bloomjava.util.hash MurmurHash)))
 
 
 (defn get-hash-buckets
+  "Cf. Kirsch and Mitzenmacher, \"Less Hashing, Same Performance: Building a
+  Better Bloom Filter\".
+  <http://www.eecs.harvard.edu/~kirsch/pubs/bbbf/esa06.pdf>"
   [e k m]
   (let [b (to-byte-array e)
-        [h1 h2] (MurmurHash3/MurmurHash3_x64_128 b 0)]
-    (map #(Math/abs (long (mod (+' h1 (*' % h2) ) m))) (range 1 (inc k)))))
+        b-len (count b)
+        h1 (MurmurHash/hash32 b b-len)
+        h2 (MurmurHash/hash32 b b-len h1)]
+    (map #(Math/abs (long (mod (+' h1 (*' % h2) ) m))) (range k))))
 
 
 (defonce LN2 (Math/log 2))
