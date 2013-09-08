@@ -38,3 +38,21 @@
   "Implement a Bloom Filter"
   (add [this elem])
   (maybe-contains? [this elem]))
+
+
+(defn add
+  "A generic function to add an element to any object that implements IFilter."
+  [o i]
+  (if (instance? bloomclj.core.IFilter o)
+    (.add o i)
+    (throw (java.lang.ClassCastException.
+            (str (class o) " does not implement IFilter")))))
+
+
+(defn maybe-contains?
+  "A generic function to check existence of an element in a Bloom Filter."
+  [o i]
+  (if (instance? bloomclj.core.IFilter o)
+    (.maybe-contains? o i)
+    (throw (java.lang.ClassCastException.
+            (str (class o) " does not implement IFilter")))))
