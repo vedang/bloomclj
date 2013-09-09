@@ -4,7 +4,7 @@ A Bloom Filter implementation in Clojure.
 
 ## Usage
 
-You can find the annotated docs for Bloomclj [here](http://vedang.github.io/bloomclj/)
+You can find the annotated docs for Bloomclj [here](http://vedang.me/bloomclj/)
 
 ### Using a simple Bloom Filter
      user> (require '[bloomclj.core
@@ -18,27 +18,27 @@ You can find the annotated docs for Bloomclj [here](http://vedang.github.io/bloo
      user> (def tbf *1)
      #'user/tbf
      user> (add tbf "hello")
-     nil
+     "OK"
      user> (add tbf "world")
-     nil
+     "OK"
      user> (maybe-contains? tbf "hello")
      true
      user> (maybe-contains? tbf "goodbye")
      false
      user> (clear tbf)
-     nil
+     "OK"
      user> (maybe-contains? tbf "hello")
      false
      user>
 
 ### Using other backing stores
 
-An example implementation of a Redis Backed Bloom Filter is provided [here](http://vedang.github.io/bloomclj/).
+An example implementation of a Redis Backed Bloom Filter is provided [here](http://vedang.me/bloomclj/#bloomclj.redis-backed).
 
 ## Contributors
 
-Vedang Manerikar (@vedang)
-Kiran Kulkarni (@kirankulkarni)
+- Vedang Manerikar (@vedang)
+- Kiran Kulkarni (@kirankulkarni)
 
 ## License
 
