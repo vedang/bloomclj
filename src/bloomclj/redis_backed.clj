@@ -9,18 +9,18 @@
 ;;; This type implements a Bloom Filter with Redis as the
 ;;; backing store. A quick explanation of the fields is as follows:
 
-;;    n    - The maximum number of elements that will be
-;;           inserted into the bloom filter. This defines
-;;           the capacity of the bloom filter. Inserting
-;;           more elements than n causes fpp to increase.
-;;    fpp  - The desired false positive probability.
-;;    m    - The total number of bits in the bit array.
-;;           Calculated for optimal val using n and fpp.
-;;    k    - The optimal number of hash functions that
-;;           should be used. Calculated using n and fpp.
-;;    spec - Redis Server spec - map containing :host
-;;           and :port
-;;    bloomkey - Key against which filter is maintained
+;;     n    - The maximum number of elements that will be
+;;            inserted into the bloom filter. This defines
+;;            the capacity of the bloom filter. Inserting
+;;            more elements than n causes fpp to increase.
+;;     fpp  - The desired false positive probability.
+;;     m    - The total number of bits in the bit array.
+;;            Calculated for optimal val using n and fpp.
+;;     k    - The optimal number of hash functions that
+;;            should be used. Calculated using n and fpp.
+;;     spec - Redis Server spec - map containing :host
+;;            and :port
+;;     bloomkey - Key against which filter is maintained
 ;;           in Redis. This is auto-generated.
 
 
@@ -78,6 +78,7 @@
 ;;     user> (maybe-contains? rbf "hello")
 ;;     false
 ;;     user>
+
 (defn redis-backed-bloom-filter
   "Construct and return a RedisBackedBloomFilter"
   [n fpp host port]

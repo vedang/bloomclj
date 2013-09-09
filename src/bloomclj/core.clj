@@ -20,6 +20,7 @@
 
 
 ;;; ## Helper functions for implementing a Bloom Filter
+
 ;;; ### 1. get-hash-buckets
 (defn get-hash-buckets
   "Given an element `e`, the number of hash functions to run on it
@@ -42,6 +43,7 @@
 
 
 ;;; ### 2. get-optimal-m
+
 (let [denominator (Math/pow LN2 2)]
   (defn get-optimal-m
     "Calculate the optimal size for the bitarray of a Bloom Filter
@@ -54,6 +56,7 @@
 
 
 ;;; ### 3. get-optimal-k
+
 (defn get-optimal-k
   "Calculate the optimal number of hash functions that should be run
    on a element when inserting it into a Bloom Filter to support the
@@ -68,6 +71,7 @@
 
 
 ;;; ## The Bloom Filter Protocol
+
 (defprotocol IFilter
   "Define the set of functions that should be implemented by a Bloom Filter."
   (add [this elem])

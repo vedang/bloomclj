@@ -61,6 +61,7 @@
 ;;     user> (maybe-contains? tbf "hello")
 ;;     false
 ;;     user>
+
 (defn transient-bloom-filter
   "Construct and return a TransientBloomFilter."
   [n fpp]
