@@ -3029,13 +3029,13 @@ net.brehaut.ClojureTools = (function (SH) {
   };
 })(SyntaxHighlighter);
 </script><title>me.vedang/bloomclj -- Marginalia</title></head><body><table><tr><td class="docs"><div class="header"><h1 class="project-name">me.vedang/bloomclj</h1><h2 class="project-version">0.1.0-SNAPSHOT</h2><br /><p>A Bloom Filter implementation in Clojure.</p>
-</div><div class="dependencies"><h3>dependencies</h3><table><tr><td class="dep-name">org.clojure/clojure</td><td class="dotted"><hr /></td><td class="dep-version">1.5.1</td></tr></table></div></td><td class="codes" style="text-align: center; vertical-align: middle;color: #666;padding-right:20px"><br /><br /><br />(this space intentionally left almost blank)</td></tr><tr><td class="docs"><div class="toc"><a name="toc"><h3>namespaces</h3></a><ul><li><a href="#bloomclj.core">bloomclj.core</a></li><li><a href="#bloomclj.protocols">bloomclj.protocols</a></li><li><a href="#bloomclj.transient">bloomclj.transient</a></li></ul></div></td><td class="codes">&nbsp;</td></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#bloomclj.core" name="bloomclj.core"><h1 class="project-name">bloomclj.core</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
+</div><div class="dependencies"><h3>dependencies</h3><table><tr><td class="dep-name">org.clojure/clojure</td><td class="dotted"><hr /></td><td class="dep-version">1.5.1</td></tr><tr><td class="dep-name">com.taoensso/carmine</td><td class="dotted"><hr /></td><td class="dep-version">2.2.0</td></tr><tr><td class="dep-name">clj-time</td><td class="dotted"><hr /></td><td class="dep-version">0.6.0</td></tr></table></div></td><td class="codes" style="text-align: center; vertical-align: middle;color: #666;padding-right:20px"><br /><br /><br />(this space intentionally left almost blank)</td></tr><tr><td class="docs"><div class="toc"><a name="toc"><h3>namespaces</h3></a><ul><li><a href="#bloomclj.core">bloomclj.core</a></li><li><a href="#bloomclj.protocols">bloomclj.protocols</a></li><li><a href="#bloomclj.redis-backed">bloomclj.redis-backed</a></li><li><a href="#bloomclj.transient">bloomclj.transient</a></li><li><a href="#bloomclj.util.core">bloomclj.util.core</a></li></ul></div></td><td class="codes">&nbsp;</td></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#bloomclj.core" name="bloomclj.core"><h1 class="project-name">bloomclj.core</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
 </td><td class="codes"><pre class="brush: clojure">(ns bloomclj.core
   (:require [bloomclj.protocols :refer [to-byte-array]])
   (:import (bloomjava.util.hash MurmurHash)))</pre></td></tr><tr><td class="docs"><h2>What is a Bloom Filter?</h2>
-</td><td class="codes"></td></tr><tr><td class="docs"><p>Wikipedia has a great entry on <a href="http://en.wikipedia.org/wiki/Bloom_filter">Bloom Filters</a>
+</td><td class="codes"></td></tr><tr><td class="docs"><p>Wikipedia has a great entry on <a href="http://en.wikipedia.org/wiki/Bloom_filter">Bloom Filters.</a>
 Quoting from it:</p>
-</td><td class="codes"></td></tr><tr><td class="docs"><p>  "A Bloom filter, conceived by Burton Howard Bloom in 1970 is a
+</td><td class="codes"></td></tr><tr><td class="docs"><p>  "A Bloom filter, conceived by Burton Howard Bloom in 1970, is a
    space-efficient probabilistic data structure that is used to
    test whether an element is a member of a set. False positive
    matches are possible, but false negatives are not; i.e. a
@@ -3044,6 +3044,7 @@ Quoting from it:</p>
    not removed (though this can be addressed with a "counting"
    filter). The more elements that are added to the set, the
    larger the probability of false positives."</p>
+</td><td class="codes"></td></tr><tr><td class="docs"><h2>Helper functions for implementing a Bloom Filter</h2>
 </td><td class="codes"></td></tr><tr><td class="docs"><p>Given an element <code>e</code>, the number of hash functions to run on it
   <code>k</code>, and the size of the bit buffer used to store the filter <code>m</code>,
   calculate the bits that should be set in the bit buffer if we were
@@ -3053,8 +3054,6 @@ Quoting from it:</p>
   described in Cf. Kirsch and Mitzenmacher, <a href="http://www.eecs.harvard.edu/~kirsch/pubs/bbbf/esa06.pdf">Less Hashing, Same
   Performance: Building a Better Bloom Filter</a></p>
 
-<h2>Helper functions for implementing a Bloom Filter</h2>
-
 <h3>1. get-hash-buckets</h3>
 </td><td class="codes"><pre class="brush: clojure">(defn get-hash-buckets
   [e k m]
@@ -3063,18 +3062,18 @@ Quoting from it:</p>
         h1 (MurmurHash/hash32 b b-len)
         h2 (MurmurHash/hash32 b b-len h1)]
     (map #(Math/abs (long (mod (+' h1 (*' % h2) ) m))) (range k))))</pre></td></tr><tr><td class="docs">
-</td><td class="codes"><pre class="brush: clojure">(defonce LN2 (Math/log 2))</pre></td></tr><tr><td class="docs"><p>Calculate the optimal size for the bitarray of a Bloom Filter
+</td><td class="codes"><pre class="brush: clojure">(defonce LN2 (Math/log 2))</pre></td></tr><tr><td class="docs"><h3>2. get-optimal-m</h3>
+</td><td class="codes"></td></tr><tr><td class="docs"><p>Calculate the optimal size for the bitarray of a Bloom Filter
      given the following parameters:</p>
 
 <pre><code>    n - max number of elements that will be inserted into the Bloom Filter
     fpp - the desired false positive probability
 </code></pre>
-
-<h3>2. get-optimal-m</h3>
 </td><td class="codes"><pre class="brush: clojure">(let [denominator (Math/pow LN2 2)]
   (defn get-optimal-m
     [^Long n ^Double fpp]
-    (Math/ceil (/ (* -1 n (Math/log fpp)) denominator))))</pre></td></tr><tr><td class="docs"><p>Calculate the optimal number of hash functions that should be run
+    (Math/ceil (/ (* -1 n (Math/log fpp)) denominator))))</pre></td></tr><tr><td class="docs"><h3>3. get-optimal-k</h3>
+</td><td class="codes"></td></tr><tr><td class="docs"><p>Calculate the optimal number of hash functions that should be run
    on a element when inserting it into a Bloom Filter to support the
    desired False Positive Probability.</p>
 
@@ -3083,13 +3082,10 @@ Quoting from it:</p>
    n - the max number of elements that can be inserted into the
    Bloom Filter (without degrading the FPP)
 </code></pre>
-
-<h3>3. get-optimal-k</h3>
 </td><td class="codes"><pre class="brush: clojure">(defn get-optimal-k
   [m n]
-  (Math/ceil (/ (* m LN2) n)))</pre></td></tr><tr><td class="docs"><p>Define the set of functions that should be implemented by a Bloom Filter.</p>
-
-<h2>The Bloom Filter Protocol</h2>
+  (Math/ceil (/ (* m LN2) n)))</pre></td></tr><tr><td class="docs"><h2>The Bloom Filter Protocol</h2>
+</td><td class="codes"></td></tr><tr><td class="docs"><p>Define the set of functions that should be implemented by a Bloom Filter.</p>
 </td><td class="codes"><pre class="brush: clojure">(defprotocol IFilter
   (add [this elem])
   (maybe-contains? [this elem])
@@ -3165,7 +3161,91 @@ Quoting from it:</p>
   clojure.lang.APersistentSet
   (to-byte-array [s] (.getBytes (binding [*print-dup* false]
                                   (pr-str s))
-                                &quot;utf-8&quot;)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#bloomclj.transient" name="bloomclj.transient"><h1 class="project-name">bloomclj.transient</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
+                                &quot;utf-8&quot;)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#bloomclj.redis-backed" name="bloomclj.redis-backed"><h1 class="project-name">bloomclj.redis-backed</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(ns bloomclj.redis-backed
+  (:require [bloomclj.core :as bc :refer [IFilter]]
+            [taoensso.carmine :as car :refer [wcar]]
+            [bloomclj.util.core :refer [rand-str date-&gt;string]]
+            [clj-time.core :as time]))</pre></td></tr><tr><td class="docs"><h2>RedisBackedBloomFilter</h2>
+</td><td class="codes"></td></tr><tr><td class="docs"><p>This type implements a Bloom Filter with Redis as the
+backing store. A quick explanation of the fields is as follows:</p>
+</td><td class="codes"></td></tr><tr><td class="docs"><pre><code>n    - The maximum number of elements that will be
+       inserted into the bloom filter. This defines
+       the capacity of the bloom filter. Inserting
+       more elements than n causes fpp to increase.
+fpp  - The desired false positive probability.
+m    - The total number of bits in the bit array.
+       Calculated for optimal val using n and fpp.
+k    - The optimal number of hash functions that
+       should be used. Calculated using n and fpp.
+spec - Redis Server spec - map containing :host
+       and :port
+bloomkey - Key against which filter is maintained
+      in Redis. This is auto-generated.
+</code></pre>
+</td><td class="codes"></td></tr><tr><td class="docs"><p>Helper function to convert the Redis Server spec map into a Redis
+  Connection map as required by Carmine.</p>
+</td><td class="codes"><pre class="brush: clojure">(defn make-redis-conn
+  [spec]
+  {:pool {:max-active 8}
+   :spec spec})</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(deftype RedisBackedBloomFilter
+    [n fpp m k spec bloomkey]
+  IFilter
+  (add [this elem]
+    (wcar (make-redis-conn spec)
+          (mapv #(car/setbit bloomkey % &quot;1&quot;)
+                (bc/get-hash-buckets elem k m)))
+    &quot;OK&quot;)
+  (maybe-contains? [this elem]
+    (every? pos?
+            (wcar (make-redis-conn spec)
+                  (mapv (partial car/getbit bloomkey)
+                        (bc/get-hash-buckets elem k m)))))
+  (clear [this]
+    (wcar (make-redis-conn spec)
+          (car/del bloomkey)
+          (car/setbit bloomkey (long m) &quot;0&quot;))
+    &quot;OK&quot;))</pre></td></tr><tr><td class="docs"><h2>Usage:</h2>
+
+<pre><code>user&gt; (require '[bloomclj.core
+                 :refer [add maybe-contains? clear]])
+nil
+user&gt; (require '[bloomclj.redis-backed
+                 :refer [redis-backed-bloom-filter]])
+nil
+user&gt; (redis-backed-bloom-filter 100000 0.01 "127.0.0.1" 6379)
+#&lt;RedisBackedBloomFilter bloomclj.redis_backed.RedisBackedBloomFilter@720ade7a&gt;
+user&gt; (def rbf *1)
+#'user/rbf
+user&gt; (add rbf "hello")
+"OK"
+user&gt; (add rbf "world")
+"OK"
+user&gt; (maybe-contains? rbf "hello")
+true
+user&gt; (maybe-contains? rbf "goodbye")
+false
+user&gt; (clear rbf)
+"OK"
+user&gt; (maybe-contains? rbf "hello")
+false
+user&gt;
+</code></pre>
+</td><td class="codes"></td></tr><tr><td class="docs"><p>Construct and return a RedisBackedBloomFilter</p>
+</td><td class="codes"><pre class="brush: clojure">(defn redis-backed-bloom-filter
+  [n fpp host port]
+  (let [m (bc/get-optimal-m n fpp)
+        k (bc/get-optimal-k m n)
+        server-spec {:host host
+                     :port port}
+        bloomkey (str &quot;bloomclj:&quot;
+                      (rand-str 10)
+                      &quot;:&quot;
+                      (date-&gt;string &quot;yyyyMMddHHmmssSSS&quot; (time/now)))]
+    ;; Allocate the bitarray in Redis.
+    (wcar (make-redis-conn server-spec) (car/setbit bloomkey (long m) &quot;0&quot;))
+    (RedisBackedBloomFilter. n fpp m k server-spec bloomkey)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#bloomclj.transient" name="bloomclj.transient"><h1 class="project-name">bloomclj.transient</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
 </td><td class="codes"><pre class="brush: clojure">(ns bloomclj.transient
   (:require [bloomclj.core :as bc :refer [IFilter]])
   (:import (java.util BitSet)))</pre></td></tr><tr><td class="docs"><h2>TransientBloomFilter</h2>
@@ -3189,14 +3269,14 @@ k   - The optimal number of hash functions that
   IFilter
   (add [this elem]
     (doseq [b (bc/get-hash-buckets elem k m)]
-      (.set bitarray b)))
+      (.set bitarray b))
+    &quot;OK&quot;)
   (maybe-contains? [this elem]
     (every? identity (map #(.get bitarray %)
                           (bc/get-hash-buckets elem k m))))
   (clear [this]
-    (.clear bitarray)))</pre></td></tr><tr><td class="docs"><p>Construct and return a TransientBloomFilter.</p>
-
-<h2>Usage:</h2>
+    (.clear bitarray)
+    &quot;OK&quot;))</pre></td></tr><tr><td class="docs"><h2>Usage:</h2>
 
 <pre><code>user&gt; (require '[bloomclj.core
                  :refer [add maybe-contains? clear]])
@@ -3209,22 +3289,37 @@ user&gt; (transient-bloom-filter 100000 0.01)
 user&gt; (def tbf *1)
 #'user/tbf
 user&gt; (add tbf "hello")
-nil
+"OK"
 user&gt; (add tbf "world")
-nil
+"OK"
 user&gt; (maybe-contains? tbf "hello")
 true
 user&gt; (maybe-contains? tbf "goodbye")
 false
 user&gt; (clear tbf)
-nil
+"OK"
 user&gt; (maybe-contains? tbf "hello")
 false
 user&gt;
 </code></pre>
+</td><td class="codes"></td></tr><tr><td class="docs"><p>Construct and return a TransientBloomFilter.</p>
 </td><td class="codes"><pre class="brush: clojure">(defn transient-bloom-filter
   [n fpp]
   (let [m (bc/get-optimal-m n fpp)
         k (bc/get-optimal-k m n)]
-    (TransientBloomFilter. (BitSet. m) n fpp m k)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr></table><div class="footer">Generated by <a href="https://github.com/fogus/marginalia">Marginalia</a>.&nbsp;&nbsp;Syntax highlighting provided by Alex Gorbatchev's <a href="http://alexgorbatchev.com/SyntaxHighlighter/">SyntaxHighlighter</a></div><script type="text/javascript">SyntaxHighlighter.defaults['gutter'] = false;
+    (TransientBloomFilter. (BitSet. m) n fpp m k)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#bloomclj.util.core" name="bloomclj.util.core"><h1 class="project-name">bloomclj.util.core</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(ns bloomclj.util.core
+  (:import (org.joda.time.format DateTimeFormat DateTimeFormatter)
+           (org.joda.time ReadableInstant)))</pre></td></tr><tr><td class="docs"><p>Generate a random string of length l</p>
+</td><td class="codes"><pre class="brush: clojure">(let [alphabet (vec &quot;abcdefghijklmnopqrstuvwxyz0123456789&quot;)]
+  (defn rand-str
+    [l]
+    (loop [n l res (transient [])]
+      (if (zero? n)
+        (apply str (persistent! res))
+        (recur (dec n) (conj! res (alphabet (rand-int 36))))))))</pre></td></tr><tr><td class="docs"><p>Convert a JodaTime object to string according to the given pattern.</p>
+</td><td class="codes"><pre class="brush: clojure">(defn date-&gt;string
+  [pattern ^ReadableInstant date-obj]
+  (let [dtf ^DateTimeFormatter (DateTimeFormat/forPattern pattern)]
+    (.print dtf date-obj)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr></table><div class="footer">Generated by <a href="https://github.com/fogus/marginalia">Marginalia</a>.&nbsp;&nbsp;Syntax highlighting provided by Alex Gorbatchev's <a href="http://alexgorbatchev.com/SyntaxHighlighter/">SyntaxHighlighter</a></div><script type="text/javascript">SyntaxHighlighter.defaults['gutter'] = false;
        SyntaxHighlighter.all()</script></body></html>
