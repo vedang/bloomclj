@@ -4,9 +4,14 @@ A Bloom Filter implementation in Clojure.
 
 ## Usage
 
+```clj
+[me.vedang/bloomclj "0.0.1"]
+```
+
 You can find the annotated docs for Bloomclj [here](http://vedang.me/bloomclj/)
 
 ### Using a simple Bloom Filter
+```clj
      user> (require '[bloomclj.core
                       :refer [add maybe-contains? clear]])
      nil
@@ -30,6 +35,7 @@ You can find the annotated docs for Bloomclj [here](http://vedang.me/bloomclj/)
      user> (maybe-contains? tbf "hello")
      false
      user>
+```
 
 ### Using other backing stores
 
