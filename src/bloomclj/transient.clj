@@ -25,14 +25,16 @@
   IFilter
   (add [this elem]
     (doseq [b (bc/get-hash-buckets elem k m)]
-      (.set bitarray b)))
+      (.set bitarray b))
+    "OK")
 
   (maybe-contains? [this elem]
     (every? identity (map #(.get bitarray %)
                           (bc/get-hash-buckets elem k m))))
 
   (clear [this]
-    (.clear bitarray)))
+    (.clear bitarray)
+    "OK"))
 
 
 ;;; ## Usage:
@@ -47,15 +49,15 @@
 ;;     user> (def tbf *1)
 ;;     #'user/tbf
 ;;     user> (add tbf "hello")
-;;     nil
+;;     "OK"
 ;;     user> (add tbf "world")
-;;     nil
+;;     "OK"
 ;;     user> (maybe-contains? tbf "hello")
 ;;     true
 ;;     user> (maybe-contains? tbf "goodbye")
 ;;     false
 ;;     user> (clear tbf)
-;;     nil
+;;     "OK"
 ;;     user> (maybe-contains? tbf "hello")
 ;;     false
 ;;     user>

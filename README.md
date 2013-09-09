@@ -31,6 +31,10 @@ You can find the annotated docs for Bloomclj [here](http://vedang.github.io/bloo
      false
      user>
 
+### Using other backing stores
+
+An example implementation of a Redis Backed Bloom Filter is provided [here](http://vedang.github.io/bloomclj/).
+
 ## Contributors
 
 Vedang Manerikar (@vedang)
