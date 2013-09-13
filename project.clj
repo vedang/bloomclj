@@ -1,4 +1,4 @@
-(defproject me.vedang/bloomclj "0.0.1"
+(defproject me.vedang/bloomclj "0.0.2"
   :description "A Bloom Filter implementation in Clojure."
   :url "http://github.com/vedang/bloomclj"
   :java-source-paths ["src/java"]

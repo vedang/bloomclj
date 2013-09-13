@@ -5,7 +5,7 @@ A Bloom Filter implementation in Clojure.
 ## Usage
 
 ```clj
-[me.vedang/bloomclj "0.0.1"]
+[me.vedang/bloomclj "0.0.2"]
 ```
 
 You can find the annotated docs for Bloomclj [here](http://vedang.me/bloomclj/)
