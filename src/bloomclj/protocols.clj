@@ -58,27 +58,29 @@
                                 "utf-8")))
 
 
-;; Anyone will wonder why this has been kept seperate?
+;; Anyone will wonder why this has been kept separate?
 ;; Reason: it is tricky to include this in extend-protocol macro.
 ;; extend-protocol groups things by splitting them into seqs and symbols.
-;; (Class/forName "[B") is a seq, so it's treated as implementation of a protocol
+;; `(Class/forName "[B")` is a seq, so it's treated as implementation of a protocol
 ;; function, not a class. However if you keep it as first thing it works
 ;; e.g. This will work:
-;; (extend-protocol IByteArray
-;;    (Class/forName "[B")
-;;    (to-byte-array [ba] ba)
-;;    java.lang.String
-;;    (to-byte-array [s] (.getBytes s)))
+;;
+;;      (extend-protocol IByteArray
+;;         (Class/forName "[B")
+;;         (to-byte-array [ba] ba)
+;;         java.lang.String
+;;         (to-byte-array [s] (.getBytes s)))
 ;;
 ;; But this won't
-;; (extend-protocol IByteArray
-;;    java.lang.String
-;;    (to-byte-array [s] (.getBytes s))
-;;    (Class/forName "[B")
-;;    (to-byte-array [ba] ba))
 ;;
-;; To avoid any unnecearry problems write and maintain it seperately
-;; Refer: https://groups.google.com/forum/#!topic/clojure/cioMCdArsKw
+;;      (extend-protocol IByteArray
+;;         java.lang.String
+;;         (to-byte-array [s] (.getBytes s))
+;;         (Class/forName "[B")
+;;         (to-byte-array [ba] ba))
+;;
+;; To avoid any unnecessary problems write and maintain it separately
+;; Refer: [Google Group Discussion](https://groups.google.com/forum/#!topic/clojure/cioMCdArsKw)
 
 (extend-type (Class/forName "[B")
   IByteArray
