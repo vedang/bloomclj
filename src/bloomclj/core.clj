@@ -77,32 +77,3 @@
   (add [this elem])
   (maybe-contains? [this elem])
   (clear [this]))
-
-
-;;; ## Generic helper functions
-
-(defn add
-  "`add` - add an element to any object that implements IFilter."
-  [o i]
-  (if (instance? bloomclj.core.IFilter o)
-    (.add o i)
-    (throw (java.lang.ClassCastException.
-            (str (class o) " does not implement IFilter")))))
-
-
-(defn maybe-contains?
-  "`maybe-contains?` - check existence of an element in a Bloom Filter."
-  [o i]
-  (if (instance? bloomclj.core.IFilter o)
-    (.maybe-contains? o i)
-    (throw (java.lang.ClassCastException.
-            (str (class o) " does not implement IFilter")))))
-
-
-(defn clear
-  "`clear` - clear the Bloom filter"
-  [o]
-  (if (instance? bloomclj.core.IFilter o)
-    (.clear o)
-    (throw (java.lang.ClassCastException.
-            (str (class o) " does not implement IFilter")))))
