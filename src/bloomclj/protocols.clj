@@ -24,12 +24,12 @@
 
   java.lang.Integer
   (to-byte-array [integer] (.. (java.nio.ByteBuffer/allocate 4)
-                               (putShort integer)
+                               (putInteger integer)
                                array))
 
   java.lang.Long
   (to-byte-array [long-int] (.. (java.nio.ByteBuffer/allocate 8)
-                                (putShort long-int)
+                                (putLong long-int)
                                 array))
 
   java.nio.ByteBuffer
