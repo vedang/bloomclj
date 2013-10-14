@@ -24,7 +24,7 @@
 
   java.lang.Integer
   (to-byte-array [integer] (.. (java.nio.ByteBuffer/allocate 4)
-                               (putInteger integer)
+                               (putInt integer)
                                array))
 
   java.lang.Long
