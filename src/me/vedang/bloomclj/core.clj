@@ -13,8 +13,7 @@
      not removed (though this can be addressed with a \"counting\"
      filter). The more elements that are added to the set, the
      larger the probability of false positives."
-  (:require [me.vedang.bloomclj.protocols :refer [to-byte-array]])
-  (:import (bloomjava.util.hash MurmurHash)))
+  (:require [me.vedang.bloomclj.util.hash :refer [unsigned-murmurhash-32]]))
 
 
 ;;; ## Helper functions for implementing a Bloom Filter
@@ -26,15 +25,13 @@
   calculate the bits that should be set in the bit buffer if we were
   to add this element to the filter.
 
-  We use MurmurHash 2 and a combinatorial generation approach as
+  We use Guava's MurmurHash 3 and a combinatorial generation approach as
   described in Cf. Kirsch and Mitzenmacher, [Less Hashing, Same
   Performance: Building a Better Bloom Filter](<http://www.eecs.harvard.edu/~kirsch/pubs/bbbf/esa06.pdf>)"
   [e k m]
-  (let [b (to-byte-array e)
-        b-len (count b)
-        h1 (MurmurHash/hash32 b b-len)
-        h2 (MurmurHash/hash32 b b-len h1)]
-    (map #(Math/abs (long (mod (+' h1 (*' % h2) ) m))) (range k))))
+  (let [h1 (unsigned-murmurhash-32 e)
+        h2 (unsigned-murmurhash-32 e :seed h1)]
+    (map #(long (mod (+' h1 (*' % h2)) m)) (range k))))
 
 
 (defonce LN2 (Math/log 2))
