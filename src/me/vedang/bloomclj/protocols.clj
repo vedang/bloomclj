@@ -1,4 +1,4 @@
-(ns bloomclj.protocols)
+(ns me.vedang.bloomclj.protocols)
 
 
 ;;; ## Protocol IByteArray

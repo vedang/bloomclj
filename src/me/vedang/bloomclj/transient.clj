@@ -1,10 +1,9 @@
-(ns bloomclj.transient
-  (:require [bloomclj.core :as bc :refer [IFilter]])
+(ns me.vedang.bloomclj.transient
+  "Implements a Bloom Filter in memory. You are probably looking for this."
+  (:require [me.vedang.bloomclj.core :as bc :refer [IFilter]])
   (:import (java.util BitSet)))
 
 ;;; ## TransientBloomFilter
-
-;;; You are probably looking for this.
 
 ;;; This type implements a TransientBloomFilter, with memory as the
 ;;; backing store. A `java.util.BitSet` bitarray is used to store the
@@ -38,14 +37,14 @@
 
 
 ;;; ## Usage:
-;;     user> (require '[bloomclj.core
+;;     user> (require '[me.vedang.bloomclj.core
 ;;                      :refer [add maybe-contains? clear]])
 ;;     nil
-;;     user> (require '[bloomclj.transient
+;;     user> (require '[me.vedang.bloomclj.transient
 ;;                      :refer [transient-bloom-filter]])
 ;;     nil
 ;;     user> (transient-bloom-filter 100000 0.01)
-;;     #<TransientBloomFilter bloomclj.transient.TransientBloomFilter@7130779c>
+;;     #<TransientBloomFilter me.vedang.bloomclj.transient.TransientBloomFilter@7130779c>
 ;;     user> (def tbf *1)
 ;;     #'user/tbf
 ;;     user> (add tbf "hello")

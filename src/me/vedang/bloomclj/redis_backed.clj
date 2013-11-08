@@ -1,7 +1,8 @@
-(ns bloomclj.redis-backed
-  (:require [bloomclj.core :as bc :refer [IFilter]]
+(ns me.vedang.bloomclj.redis-backed
+  "Implements a Bloom Filter with Redis as the backing store."
+  (:require [me.vedang.bloomclj.core :as bc :refer [IFilter]]
             [taoensso.carmine :as car :refer [wcar]]
-            [bloomclj.util.core :refer [rand-str date->string]]
+            [me.vedang.bloomclj.util.core :refer [rand-str date->string]]
             [clj-time.core :as time]))
 
 ;;; ## RedisBackedBloomFilter
@@ -55,14 +56,14 @@
 
 
 ;;; ## Usage:
-;;     user> (require '[bloomclj.core
+;;     user> (require '[me.vedang.bloomclj.core
 ;;                      :refer [add maybe-contains? clear]])
 ;;     nil
-;;     user> (require '[bloomclj.redis-backed
+;;     user> (require '[me.vedang.bloomclj.redis-backed
 ;;                      :refer [redis-backed-bloom-filter]])
 ;;     nil
 ;;     user> (redis-backed-bloom-filter 100000 0.01 "127.0.0.1" 6379)
-;;     #<RedisBackedBloomFilter bloomclj.redis_backed.RedisBackedBloomFilter@720ade7a>
+;;     #<RedisBackedBloomFilter me.vedang.bloomclj.redis_backed.RedisBackedBloomFilter@720ade7a>
 ;;     user> (def rbf *1)
 ;;     #'user/rbf
 ;;     user> (add rbf "hello")

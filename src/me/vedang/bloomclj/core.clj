@@ -1,22 +1,20 @@
-(ns bloomclj.core
-  (:require [bloomclj.protocols :refer [to-byte-array]])
+(ns me.vedang.bloomclj.core
+  "## What is a Bloom Filter?
+
+   Wikipedia has a great entry on [Bloom Filters.](http://en.wikipedia.org/wiki/Bloom_filter)
+   Quoting from it:
+
+     A Bloom filter, conceived by Burton Howard Bloom in 1970, is a
+     space-efficient probabilistic data structure that is used to
+     test whether an element is a member of a set. False positive
+     matches are possible, but false negatives are not; i.e. a
+     query returns either \"inside set (may be wrong)\" or
+     \"definitely not in set\". Elements can be added to the set, but
+     not removed (though this can be addressed with a \"counting\"
+     filter). The more elements that are added to the set, the
+     larger the probability of false positives."
+  (:require [me.vedang.bloomclj.protocols :refer [to-byte-array]])
   (:import (bloomjava.util.hash MurmurHash)))
-
-
-;;; ## What is a Bloom Filter?
-
-;;; Wikipedia has a great entry on [Bloom Filters.](http://en.wikipedia.org/wiki/Bloom_filter)
-;;; Quoting from it:
-
-;;;   "A Bloom filter, conceived by Burton Howard Bloom in 1970, is a
-;;;    space-efficient probabilistic data structure that is used to
-;;;    test whether an element is a member of a set. False positive
-;;;    matches are possible, but false negatives are not; i.e. a
-;;;    query returns either "inside set (may be wrong)" or
-;;;    "definitely not in set". Elements can be added to the set, but
-;;;    not removed (though this can be addressed with a "counting"
-;;;    filter). The more elements that are added to the set, the
-;;;    larger the probability of false positives."
 
 
 ;;; ## Helper functions for implementing a Bloom Filter

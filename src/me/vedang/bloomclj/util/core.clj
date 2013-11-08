@@ -1,4 +1,4 @@
-(ns bloomclj.util.core
+(ns me.vedang.bloomclj.util.core
   (:import (org.joda.time.format DateTimeFormat DateTimeFormatter)
            (org.joda.time ReadableInstant)))
 
