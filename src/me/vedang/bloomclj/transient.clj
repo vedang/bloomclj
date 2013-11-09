@@ -23,16 +23,16 @@
     [^:unsynchronized-mutable bitarray n fpp m k]
   IFilter
   (add [this elem]
-    (doseq [b (bc/get-hash-buckets elem k m)]
-      (.set bitarray b))
+    (doseq [^long b (bc/get-hash-buckets elem k m)]
+      (.set ^java.util.BitSet bitarray b))
     "OK")
 
   (maybe-contains? [this elem]
-    (every? identity (map #(.get bitarray %)
+    (every? identity (map #(.get ^java.util.BitSet bitarray %)
                           (bc/get-hash-buckets elem k m))))
 
   (clear [this]
-    (.clear bitarray)
+    (.clear ^java.util.BitSet bitarray)
     "OK"))
 
 

@@ -40,7 +40,7 @@
 ;;; ### 2. get-optimal-m
 
 (let [denominator (Math/pow LN2 2)]
-  (defn get-optimal-m
+  (defn ^Double get-optimal-m
     "Calculate the optimal size for the bitarray of a Bloom Filter
      given the following parameters:
 
@@ -52,7 +52,7 @@
 
 ;;; ### 3. get-optimal-k
 
-(defn get-optimal-k
+(defn ^Double get-optimal-k
   "Calculate the optimal number of hash functions that should be run
    on a element when inserting it into a Bloom Filter to support the
    desired False Positive Probability.
@@ -61,7 +61,7 @@
 
        n - the max number of elements that can be inserted into the
        Bloom Filter (without degrading the FPP)"
-  [m n]
+  [^Double m ^Long n]
   (Math/ceil (/ (* m LN2) n)))
 
 

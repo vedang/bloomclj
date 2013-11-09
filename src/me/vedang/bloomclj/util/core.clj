@@ -4,7 +4,7 @@
 
 
 (let [alphabet (vec "abcdefghijklmnopqrstuvwxyz0123456789")]
-  (defn rand-str
+  (defn ^String rand-str
     "Generate a random string of length l"
     [l]
     (loop [n l res (transient [])]
@@ -13,7 +13,7 @@
         (recur (dec n) (conj! res (alphabet (rand-int 36))))))))
 
 
-(defn date->string
+(defn ^String date->string
   "Convert a JodaTime object to string according to the given pattern."
   [pattern ^ReadableInstant date-obj]
   (let [dtf ^DateTimeFormatter (DateTimeFormat/forPattern pattern)]
