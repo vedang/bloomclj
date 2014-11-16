@@ -71,4 +71,6 @@
   "Define the set of functions that should be implemented by a Bloom Filter."
   (add [this elem])
   (maybe-contains? [this elem])
-  (clear [this]))
+  (clear [this])
+  (union [this other])
+  (intersection [this other]))

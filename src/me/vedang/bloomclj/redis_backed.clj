@@ -32,9 +32,19 @@
   {:pool {:max-active 8}
    :spec spec})
 
+(defn gen-bloomkey []
+  (str "bloomclj:"
+       (rand-str 10)
+       ":"
+       (date->string "yyyyMMddHHmmssSSS" (time/now))))
+
+(defprotocol IBloomkey
+  (get-bloomkey [this]))
 
 (deftype RedisBackedBloomFilter
     [n fpp m k spec bloomkey]
+  IBloomkey
+  (get-bloomkey [_] bloomkey)
   IFilter
   (add [this elem]
     (wcar (make-redis-conn spec)
@@ -52,7 +62,21 @@
     (wcar (make-redis-conn spec)
           (car/del bloomkey)
           (car/setbit bloomkey (long m) "0"))
-    "OK"))
+    "OK")
+
+  (union [this other]
+    (let [otherkey (get-bloomkey other)
+          dest-key (gen-bloomkey)]
+      (wcar (make-redis-conn spec)
+            (car/bitop "or" dest-key otherkey bloomkey))
+      (RedisBackedBloomFilter. n fpp m k spec dest-key)))
+
+  (intersection [this other]
+    (let [otherkey (get-bloomkey other)
+          dest-key (gen-bloomkey)]
+      (wcar (make-redis-conn spec)
+            (car/bitop "and" dest-key otherkey bloomkey))
+      (RedisBackedBloomFilter. n fpp m k spec dest-key))))
 
 
 ;;; ## Usage:
@@ -87,10 +111,7 @@
         k (bc/get-optimal-k m n)
         server-spec {:host host
                      :port port}
-        bloomkey (str "bloomclj:"
-                      (rand-str 10)
-                      ":"
-                      (date->string "yyyyMMddHHmmssSSS" (time/now)))]
+        bloomkey (gen-bloomkey)]
     ;; Allocate the bitarray in Redis.
     (wcar (make-redis-conn server-spec) (car/setbit bloomkey (long m) "0"))
     (RedisBackedBloomFilter. n fpp m k server-spec bloomkey)))

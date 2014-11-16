@@ -19,8 +19,13 @@
 ;;     k   - The optimal number of hash functions that
 ;;           should be used. Calculated using n and fpp.
 
+(defprotocol IBitarray
+  (get-bitarray [this]))
+
 (deftype TransientBloomFilter
-    [^:unsynchronized-mutable bitarray n fpp m k]
+    [^:unsynchronized-mutable ^java.util.BitSet bitarray n fpp m k]
+  IBitarray
+  (get-bitarray [_] bitarray)
   IFilter
   (add [this elem]
     (doseq [^long b (bc/get-hash-buckets elem k m)]
@@ -33,8 +38,17 @@
 
   (clear [this]
     (.clear ^java.util.BitSet bitarray)
-    "OK"))
+    "OK")
 
+  (union [this other]
+    (let [bitarray* (.clone bitarray)]
+      (.or ^java.util.BitSet bitarray* (get-bitarray other))
+      (TransientBloomFilter. bitarray* n fpp m k)))
+
+  (intersection [this other]
+    (let [bitarray* (.clone bitarray)]
+      (.and ^java.util.BitSet bitarray* (get-bitarray other))
+      (TransientBloomFilter. bitarray* n fpp m k))))
 
 ;;; ## Usage:
 ;;     user> (require '[me.vedang.bloomclj.core
