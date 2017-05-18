@@ -45,6 +45,7 @@ An example implementation of a Redis Backed Bloom Filter is provided [here](http
 
 - Vedang Manerikar ([@vedang](https://github.com/vedang))
 - Kiran Kulkarni ([@kirankulkarni](https://github.com/kirankulkarni))
+- Chris Truter ([@crisptrutski](https://github.com/crisptrutski))
 
 ## License
 
