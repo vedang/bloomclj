@@ -27,7 +27,7 @@
 
   We use Guava's MurmurHash 3 and a combinatorial generation approach as
   described in Cf. Kirsch and Mitzenmacher, [Less Hashing, Same
-  Performance: Building a Better Bloom Filter](<http://www.eecs.harvard.edu/~kirsch/pubs/bbbf/esa06.pdf>)"
+  Performance: Building a Better Bloom Filter](<https://www.eecs.harvard.edu/~michaelm/postscripts/tr-02-05.pdf>)"
   [e k m]
   (let [h1 (unsigned-murmurhash-32 e)
         h2 (unsigned-murmurhash-32 e :seed h1)]
